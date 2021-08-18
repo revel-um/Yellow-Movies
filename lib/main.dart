@@ -75,11 +75,13 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: ListView(
         children: [
-          showAbleList.isEmpty?SizedBox():Container(
-            height: 40,
-            color: Colors.white,
-            child: Center(child: Text('Swipe on list for more options')),
-          ),
+          showAbleList.isEmpty
+              ? SizedBox()
+              : Container(
+                  height: 40,
+                  color: Colors.white,
+                  child: Center(child: Text('Swipe on list for more options')),
+                ),
           ...showAbleList,
         ],
       ),

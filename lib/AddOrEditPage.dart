@@ -8,6 +8,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:yellow_movies/DataBaseFunctions/AllFunctions.dart';
 import 'package:yellow_movies/authentication_service.dart';
 
+import 'main.dart';
+
 class AddOrEditPage extends StatefulWidget {
   final adding;
   final uri;
@@ -66,26 +68,28 @@ class _AddOrEditPageState extends State<AddOrEditPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(widget.adding ? 'Add' : 'Edit Info'),
-        actions: widget.adding? [
-          TextButton(
-            onPressed: () async {
-              AuthenticationService authService =
-                  AuthenticationService(FirebaseAuth.instance);
-              setState(() {
-                top = fadingCircle;
-              });
-              await authService.signOut();
-              Navigator.pop(context);
-              setState(() {
-                top = null;
-              });
-            },
-            child: Text(
-              'Logout',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        ]:[],
+        actions: widget.adding
+            ? [
+                TextButton(
+                  onPressed: () async {
+                    AuthenticationService authService =
+                        AuthenticationService(FirebaseAuth.instance);
+                    setState(() {
+                      top = fadingCircle;
+                    });
+                    await authService.signOut();
+                    Navigator.pop(context);
+                    setState(() {
+                      top = null;
+                    });
+                  },
+                  child: Text(
+                    'Logout',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ]
+            : [],
       ),
       body: Stack(
         children: [
@@ -188,7 +192,11 @@ class _AddOrEditPageState extends State<AddOrEditPage> {
                               link: link,
                               name: movieNameCon.text,
                             );
-                            Navigator.pop(context, moviesTable);
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => MyApp()),
+                                (route) => false);
                             return;
                           } else {
                             print('Edit');
