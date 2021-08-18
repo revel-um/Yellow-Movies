@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "169722220135",
+    "project_id": "yellow-class-c4153",
+    "storage_bucket": "yellow-class-c4153.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:169722220135:android:7bb7c6140575bcddd48ec2",
+        "android_client_info": {
+          "package_name": "com.example.yellow_movies"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "169722220135-q1js4625rsscu417v3j8o7p8lfgon7q4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBp6yl5KnGezx10oPJjwiZV0n9zD-MiWRE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "169722220135-q1js4625rsscu417v3j8o7p8lfgon7q4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
