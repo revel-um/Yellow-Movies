@@ -1,6 +1,8 @@
-import 'dart:io' show Platform, File;
+import 'dart:io' show File, Platform;
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -8,6 +10,7 @@ import 'package:yellow_movies/AddOrEditPage.dart';
 import 'package:yellow_movies/SignUp.dart';
 import 'package:yellow_movies/google_sign_in_provider.dart';
 import 'DataBaseFunctions/AllFunctions.dart';
+import 'OfflinePage.dart';
 import 'component/SwipeAbleList.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -41,6 +44,19 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List<Widget> showAbleList = [];
 
+  var top;
+
+  final fadingCircle = SpinKitFadingCircle(
+    itemBuilder: (BuildContext context, int index) {
+      return DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: index.isEven ? Colors.blue : Colors.blue,
+        ),
+      );
+    },
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,16 +89,24 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      body: ListView(
+      body: Stack(
         children: [
-          showAbleList.isEmpty
-              ? SizedBox()
-              : Container(
-                  height: 40,
-                  color: Colors.white,
-                  child: Center(child: Text('Swipe on list for more options')),
-                ),
-          ...showAbleList,
+          ListView(
+            children: [
+              showAbleList.isEmpty
+                  ? SizedBox()
+                  : Container(
+                      height: 40,
+                      color: Colors.white,
+                      child:
+                          Center(child: Text('Swipe on list for more options')),
+                    ),
+              ...showAbleList,
+            ],
+          ),
+          Center(
+            child: top,
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -119,17 +143,40 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> initAll() async {
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    bool? firstRun = pref.getBool('firstRun');
-    if (firstRun == null) {
-      firstRun = true;
-      pref.setBool('firstRun', false);
-      callDummy(doNotDelete: false);
+    setState(() {
+      top = fadingCircle;
+    });
+    if (await hasNetwork()) {
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      bool? firstRun = pref.getBool('firstRun');
+      if (firstRun == null) {
+        firstRun = true;
+        pref.setBool('firstRun', false);
+        callDummy(doNotDelete: false);
+      } else {
+        AllFunctions allFunctions = AllFunctions();
+        final moviesList = await allFunctions.getDb();
+        showAbleList = getList(moviesList);
+      }
     } else {
-      AllFunctions allFunctions = AllFunctions();
-      final moviesList = await allFunctions.getDb();
-      showAbleList = getList(moviesList);
-      setState(() {});
+      Navigator.pushReplacement(
+        this.context,
+        MaterialPageRoute(
+          builder: (context) => OfflinePage(),
+        ),
+      );
+    }
+    setState(() {
+      top = null;
+    });
+  }
+
+  Future<bool> hasNetwork() async {
+    try {
+      final result = await InternetAddress.lookup('example.com');
+      return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+    } on SocketException catch (_) {
+      return false;
     }
   }
 
